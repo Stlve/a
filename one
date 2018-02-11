@@ -1,0 +1,70 @@
+#include<stdio.h>
+static int m,n=1,sum[5]={0};//n为电梯所在楼层，m为时刻 
+int up(int k);
+int down(int k);
+struct lift
+	{
+		int time;
+		int floor;
+		int final;
+	}people[5];//定义结构体来存储五个输入，使得每个人的三个数据形成联系 。 
+int main()
+{
+	int i,total;
+	for(i=0;i<5;i++){
+		scanf("%d %d %d",&people[i].time,&people[i].floor,&people[i].final);//输入数据 
+	}
+	m=people[0].time;//最开始的时间由第一个决定 
+	for(i=0;i<5;i++){
+		if(i==0||sum[i-1]>=people[i].time){ //判断是否有人发出请求 
+		if(people[i].final==0)
+		people[i].final=10;//0转化为十层 
+		if(i!=0)
+		n=people[i-1].final;
+		if(people[i].floor==n){
+			if(people[i].final==10){
+			if(i==0) 
+			sum[i]=up(i);
+			else
+			sum[i]=up(i)+sum[i-1]; } 
+			else {if(i==0)sum[i]=down(i);
+			else  sum[i]=down(i)+sum[i-1];
+			} 
+		}//如果刚好停留在所在层数
+		else{
+			if(people[i].final==10)
+			{
+				if(i==0)
+				sum[i]=up(i)+people[i].floor-n;
+				else sum[i]=up(i)+sum[i-1]+people[i].floor-n; 
+			}
+			else {
+				if(i==0) sum[i]=down(i)+people[i].floor-n;
+			else  sum[i]=down(i)+sum[i-1]+people[i].floor-n;
+			}
+		} //如果不在所在层数，则先前往该层数，在把她送到指定位置，看是往上还是往下； 
+	}} 
+	for(i=0;i<5;i++){
+		 
+		printf("%d时，停靠在%d楼\n",sum[i]+m,people[i].final);
+	}
+	return 0; 
+ } 
+ 
+ //向上 
+int up(int k)
+{
+	int total;
+	total=10-people[k].floor+1;
+	return total;
+	
+}
+
+
+//向下 
+int down(int k)
+{
+	int total;
+	total=people[k].floor-1+1;
+	return total;
+}
