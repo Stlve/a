@@ -1,0 +1,95 @@
+/*思路：电梯大概运行两次，第一次由 第一位选择是上还是下，顺带接上路上的人，（判断他是否在电梯运行的路上那段时间 ）
+后面电梯第一次运行之后，不是在第一层，就是在第十层，就去载剩下的乘客，可以把在电梯运行的时间段发出请求的人都接上，
+而在电梯第一次没有接上的那些人只能多等会，第三次运行才能达到 */ 
+#include<stdio.h>
+static int m,n=1,sum[5]={0};//n为电梯所在楼层，m为时刻 ,sum为五个人到达目的地所用时间 
+int up(int k);
+int down(int k);
+struct lift
+	{
+		int time;
+		int floor;
+		int final;
+	}people[5];//定义结构体来存储五个输入，使得每个人的三个数据形成联系 。 
+int main()
+{
+	int i;
+	for(i=0;i<5;i++){
+		scanf("%d %d %d",&people[i].time,&people[i].floor,&people[i].final);//输入结构体 
+	} 
+	m=people[0].time;
+	for(i=0;i<5;i++){
+		if(sum[i]!=0) {
+			if(i==0){//判断是不是第一个 
+				if(people[i].final==0){ //判断是向上的 
+				people[i].final=10; 
+				if(people.floor==n){//在同一层楼 
+					sum[i]=up(i); //第一个，并且是同一层楼，则只要计算上去的时间 
+				}
+				
+				else {//不在同一层但是是第一个 
+					sum[i]=up(i)+people[i].floor-1;
+				}
+			}
+			//向下同理 
+			else 
+			{
+				if(people.floor==n){//在同一层楼 
+					sum[i]=down(i); //第一个，并且是同一层楼，则只要计算下去的时间 
+				}
+				
+				else {//不在同一层但是是第一个 
+					sum[i]=down(i)+people[i].floor-1;
+			 } 
+			} 
+		}
+		//不是第一个的时候 
+		else 
+		{
+			if(people[i].final==0){//向上 
+				people[i].final=10;
+				sum[i]=m+up(i)+people[i].floor-n;
+			} 
+			else {//向下 
+				sum[i]=m+down(i)+n-people[i].floor;
+			}
+		 } 
+	}	
+	
+	//输出数据 
+	for(i=0;i<5;i++){
+		
+		printf("%d时，停靠在%d楼\n",sum[i],people[i].final);
+	}
+	return 0; 
+ } 
+ 
+ 
+ int up(int k)
+ {
+ 	int j,total=0,u;
+ 	for(j=people[k].floor;j<10;j++,m++){
+ 		for(u=0;u<5;u++){
+ 			if(sum[u]==0&&people[u].time==m&&people[u].floor==j)
+ 			total++;
+ 			
+		 }
+	 }
+	 total=total+10-people[k].floor;
+	 n=10;
+	 return total; 
+ }
+ 
+ int down (int k)
+ {
+ 	int j,total=0,u;
+ 	for(j=people[k].floor;j>=1;j--,m++){
+ 		for(u=0;u<5;u++){
+ 			if(sum[u]==0&&people[u].time==m&&people[u].floor==j)
+ 			total++;
+		 }
+	 }
+	 total=total+people[k].floor-1;
+	 n=1;
+	 return total; 
+ }
